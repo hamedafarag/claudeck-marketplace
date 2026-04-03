@@ -1,0 +1,10 @@
+{
+  "id": "event-stream",
+  "name": "Event Stream",
+  "version": "1.0.0",
+  "description": "Real-time WebSocket event viewer with filtering and search",
+  "author": "claudeck",
+  "icon": "⚡",
+  "hasServer": false,
+  "minClaudeckVersion": "1.4.0"
+}

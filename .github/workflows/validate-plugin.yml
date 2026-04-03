@@ -1,0 +1,118 @@
+name: Validate Plugin
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "plugins/**"
+      - "marketplace.json"
+
+jobs:
+  validate:
+    name: Validate Plugin Submission
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Full history for diff against base branch
+
+      - name: Fetch base branch
+        run: git fetch origin ${{ github.base_ref }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Run plugin validator
+        run: node scripts/validate-plugin.js
+
+      - name: Check for server plugins
+        id: server-check
+        run: |
+          # Find if any changed plugin has hasServer: true
+          HAS_SERVER=false
+          for manifest in plugins/*/manifest.json; do
+            if [ -f "$manifest" ]; then
+              if grep -q '"hasServer"\s*:\s*true' "$manifest"; then
+                HAS_SERVER=true
+                PLUGIN_NAME=$(dirname "$manifest" | xargs basename)
+                echo "::warning::Plugin '$PLUGIN_NAME' includes server-side code — requires extra review"
+              fi
+            fi
+          done
+          echo "has_server=$HAS_SERVER" >> "$GITHUB_OUTPUT"
+
+      - name: Add server plugin label
+        if: steps.server-check.outputs.has_server == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              labels: ['server-plugin', 'needs-security-review']
+            });
+
+      - name: Post validation summary
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { execSync } = require('child_process');
+            let output;
+            let passed = true;
+            try {
+              output = execSync('node scripts/validate-plugin.js', {
+                encoding: 'utf8',
+                cwd: process.cwd(),
+              });
+            } catch (e) {
+              output = e.stdout || e.message;
+              passed = false;
+            }
+
+            // Strip ANSI codes for the comment
+            const clean = output.replace(/\x1b\[[0-9;]*m/g, '');
+
+            const icon = passed ? '✅' : '❌';
+            const status = passed ? 'passed' : 'failed';
+
+            const body = `## ${icon} Plugin Validation ${status}
+
+            \`\`\`
+            ${clean}
+            \`\`\`
+
+            ${passed ? '' : '> Please fix the errors above and push again.'}
+            `;
+
+            // Find existing bot comment to update
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const botComment = comments.find(
+              c => c.user.type === 'Bot' && c.body.includes('Plugin Validation')
+            );
+
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }

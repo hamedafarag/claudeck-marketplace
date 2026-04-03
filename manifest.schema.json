@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Claudeck Plugin Manifest",
+  "description": "Schema for manifest.json in Claudeck plugins",
+  "type": "object",
+  "required": ["id", "name", "version", "description", "author"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+$",
+      "description": "Unique plugin identifier (lowercase, hyphens only)"
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable plugin name"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semantic version (e.g. 1.0.0)"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 120,
+      "description": "Short description shown in the marketplace"
+    },
+    "author": {
+      "type": "string",
+      "description": "Author name or GitHub username"
+    },
+    "icon": {
+      "type": "string",
+      "description": "Emoji or short SVG string"
+    },
+    "hasServer": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the plugin includes server-side routes"
+    },
+    "minClaudeckVersion": {
+      "type": "string",
+      "description": "Minimum Claudeck version required (e.g. 1.4.0)"
+    },
+    "homepage": {
+      "type": "string",
+      "format": "uri",
+      "description": "URL to plugin docs or repo"
+    },
+    "keywords": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Search keywords"
+    }
+  },
+  "additionalProperties": false
+}

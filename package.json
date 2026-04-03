@@ -1,0 +1,10 @@
+{
+  "name": "claudeck-marketplace",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build-server-routes.js",
+    "validate": "node scripts/validate-plugin.js"
+  }
+}

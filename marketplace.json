@@ -1,0 +1,44 @@
+{
+  "name": "claudeck-marketplace",
+  "version": "1.0.0",
+  "description": "Official Claudeck Plugin Marketplace",
+  "plugins": [
+    {
+      "id": "tasks",
+      "source": "./plugins/tasks",
+      "version": "1.0.0",
+      "name": "Tasks",
+      "description": "Todo list with priority levels and brag tracking",
+      "author": "claudeck",
+      "icon": "✅",
+      "hasServer": true
+    },
+    {
+      "id": "event-stream",
+      "source": "./plugins/event-stream",
+      "version": "1.0.0",
+      "name": "Event Stream",
+      "description": "Real-time WebSocket event viewer with filtering and search",
+      "author": "claudeck",
+      "icon": "⚡"
+    },
+    {
+      "id": "tic-tac-toe",
+      "source": "./plugins/tic-tac-toe",
+      "version": "1.0.0",
+      "name": "Tic Tac Toe",
+      "description": "Classic tic-tac-toe game",
+      "author": "claudeck",
+      "icon": "🎮"
+    },
+    {
+      "id": "sudoku",
+      "source": "./plugins/sudoku",
+      "version": "1.0.0",
+      "name": "Sudoku",
+      "description": "Sudoku puzzle game with multiple difficulty levels",
+      "author": "claudeck",
+      "icon": "🧩"
+    }
+  ]
+}

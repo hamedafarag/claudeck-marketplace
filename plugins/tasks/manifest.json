@@ -1,0 +1,10 @@
+{
+  "id": "tasks",
+  "name": "Tasks",
+  "version": "1.0.0",
+  "description": "Todo list with priority levels and brag tracking",
+  "author": "claudeck",
+  "icon": "✅",
+  "hasServer": true,
+  "minClaudeckVersion": "1.4.0"
+}

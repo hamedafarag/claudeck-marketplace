@@ -1,0 +1,27 @@
+{
+  "buildCommand": "node scripts/build-server-routes.js",
+  "framework": null,
+  "rewrites": [
+    { "source": "/js/ui/tab-sdk.js", "destination": "/showcase/mock/tab-sdk.js" },
+    { "source": "/js/core/utils.js", "destination": "/showcase/mock/utils.js" },
+    { "source": "/js/core/:path*.js", "destination": "/showcase/mock/noop.js" },
+    { "source": "/api/registry", "destination": "/api/registry" },
+    { "source": "/api/plugins/:name/:path*", "destination": "/api/plugins/:name" },
+    { "source": "/", "destination": "/showcase/index.html" },
+    { "source": "/preview", "destination": "/showcase/preview.html" },
+    { "source": "/css/:path*", "destination": "/showcase/css/:path*" },
+    { "source": "/gallery.js", "destination": "/showcase/js/gallery.js" }
+  ],
+  "headers": [
+    {
+      "source": "/showcase/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=3600" }]
+    },
+    {
+      "source": "/plugins/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=3600" }
+      ]
+    }
+  ]
+}

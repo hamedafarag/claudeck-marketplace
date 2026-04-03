@@ -1,0 +1,10 @@
+{
+  "id": "sudoku",
+  "name": "Sudoku",
+  "version": "1.0.0",
+  "description": "Sudoku puzzle game",
+  "author": "claudeck",
+  "icon": "🧩",
+  "hasServer": false,
+  "minClaudeckVersion": "1.4.0"
+}
