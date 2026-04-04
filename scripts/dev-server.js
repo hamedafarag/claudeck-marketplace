@@ -27,18 +27,23 @@ function rewrite(url) {
 
   // Mock module rewrites
   if (path === '/js/ui/tab-sdk.js')  return '/showcase/mock/tab-sdk.js';
+  if (path === '/js/ui/api.js')      return '/showcase/mock/api.js';
   if (path === '/js/core/utils.js')  return '/showcase/mock/utils.js';
+  if (path.startsWith('/js/ui/') && path.endsWith('.js'))   return '/showcase/mock/noop.js';
   if (path.startsWith('/js/core/') && path.endsWith('.js')) return '/showcase/mock/noop.js';
 
   // Page rewrites
   if (path === '/')         return '/showcase/index.html';
+  if (path === '/plugins')  return '/showcase/plugins.html';
   if (path === '/preview')  return '/showcase/preview.html';
 
   // Gallery JS
   if (path === '/gallery.js') return '/showcase/js/gallery.js';
+  if (path === '/home.js')    return '/showcase/js/home.js';
 
-  // CSS
+  // CSS & images
   if (path.startsWith('/css/')) return '/showcase' + path;
+  if (path.startsWith('/images/')) return '/showcase' + path;
 
   // Everything else: serve from root
   return path;

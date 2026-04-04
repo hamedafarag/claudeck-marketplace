@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claudeck Marketplace :: browse plugins</title>
+  <meta name="description" content="Browse, search, and preview all community plugins for Claudeck.">
+  <meta name="theme-color" content="#050508">
+  <meta name="color-scheme" content="dark">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+  <!-- ═══════ NAV ═══════ -->
+  <nav class="nav" aria-label="Main navigation">
+    <div class="nav-brand">
+      <a href="https://claudeck.app" class="nav-logo" target="_blank" rel="noopener">
+        <img src="/images/whaly.png" alt="Whaly" width="32" height="22">
+        Claudeck
+      </a>
+      <span class="nav-breadcrumb">/</span>
+      <a href="/" class="nav-section">Marketplace</a>
+      <span class="nav-breadcrumb">/</span>
+      <a href="/plugins" class="nav-section nav-section-active">Plugins</a>
+    </div>
+    <div class="nav-links" id="navLinks">
+      <a href="https://claudeck.app/#features" target="_blank" rel="noopener">Features</a>
+      <a href="https://claudeck.app/#agents" target="_blank" rel="noopener">Agents</a>
+      <a href="/plugins">Plugins</a>
+      <a href="https://github.com/hamedafarag/claudeck" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://discord.gg/jYYUNS7V" target="_blank" rel="noopener" class="nav-discord" aria-label="Join Discord">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M20.317 4.37a19.791 19.791 0 00-4.885-1.515.074.074 0 00-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 00-5.487 0 12.64 12.64 0 00-.617-1.25.077.077 0 00-.079-.037A19.736 19.736 0 003.677 4.37a.07.07 0 00-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 00.031.057 19.9 19.9 0 005.993 3.03.078.078 0 00.084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 00-.041-.106 13.107 13.107 0 01-1.872-.892.077.077 0 01-.008-.128 10.2 10.2 0 00.372-.292.074.074 0 01.077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 01.078.01c.12.098.246.198.373.292a.077.077 0 01-.006.127 12.299 12.299 0 01-1.873.892.077.077 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028 19.839 19.839 0 006.002-3.03.077.077 0 00.032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 00-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+        Discord
+      </a>
+      <a href="https://www.producthunt.com/products/claudeck?embed=true&amp;utm_source=badge-featured&amp;utm_medium=badge&amp;utm_campaign=badge-claudeck" target="_blank" rel="noopener noreferrer" class="nav-ph">
+        <img alt="Claudeck on Product Hunt" height="36" src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1105387&amp;theme=dark&amp;t=1774342457531">
+      </a>
+      <a href="https://www.npmjs.com/package/claudeck" target="_blank" rel="noopener" class="nav-cta">npx claudeck</a>
+    </div>
+    <button class="nav-hamburger" id="hamburger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <main>
+    <!-- ═══════ PAGE HEADER ═══════ -->
+    <section class="page-header">
+      <div class="section" style="padding-bottom:0;">
+        <div class="section-header reveal">
+          <div class="section-label">Browse</div>
+          <h2 class="section-title">All Plugins</h2>
+          <p class="section-desc">Search, filter, and preview every community plugin available for Claudeck.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════ PLUGIN CATALOG ═══════ -->
+    <section id="plugins">
+      <div class="section" style="padding-top:0;">
+
+        <!-- Toolbar: search + filters + sort + view toggle -->
+        <div class="plugin-toolbar reveal reveal-delay-1">
+          <div class="toolbar-search">
+            <span class="search-prompt">&gt;</span>
+            <input type="text" id="plugin-search" class="search-input"
+                   placeholder="search plugins..." autocomplete="off" spellcheck="false"
+                   aria-label="Search plugins">
+            <span class="search-count" id="search-count"></span>
+            <kbd class="search-kbd">/</kbd>
+          </div>
+
+          <div class="toolbar-controls">
+            <div class="toolbar-filters" id="toolbar-filters">
+              <button class="chip active" data-filter="all">All</button>
+              <button class="chip" data-filter="client">Client</button>
+              <button class="chip" data-filter="server">Full-Stack</button>
+              <span class="chip-divider" id="chip-divider" style="display:none"></span>
+              <!-- Keyword chips injected by gallery.js -->
+            </div>
+
+            <div class="toolbar-actions">
+              <select id="plugin-sort" class="toolbar-sort" aria-label="Sort plugins">
+                <option value="name-asc">A &ndash; Z</option>
+                <option value="name-desc">Z &ndash; A</option>
+                <option value="newest">Recently Added</option>
+                <option value="author">Author</option>
+              </select>
+
+              <div class="view-toggle" id="view-toggle">
+                <button class="view-btn active" data-view="grid" aria-label="Grid view">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                </button>
+                <button class="view-btn" data-view="list" aria-label="List view">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="toolbar-status">
+            <span class="status-count"><span id="result-count">0</span> plugins</span>
+            <button class="status-clear" id="clear-filters" style="display:none">clear filters</button>
+          </div>
+        </div>
+
+        <div class="plugin-grid" id="plugin-grid">
+          <!-- Rendered by gallery.js -->
+        </div>
+        <div class="plugin-empty" id="plugin-empty" style="display:none" aria-live="polite">
+          <div class="empty-icon"></div>
+          <div class="empty-title" id="empty-title">No plugins found</div>
+          <div class="empty-desc" id="empty-desc">Try a different search or clear filters.</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ═══════ FOOTER ═══════ -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <img src="/images/whaly.png" alt="" width="20" height="14">
+        Built with Whaly
+      </div>
+      <div class="footer-links">
+        <a href="https://github.com/hamedafarag/claudeck" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://www.npmjs.com/package/claudeck" target="_blank" rel="noopener">npm</a>
+        <a href="https://github.com/hamedafarag/claudeck/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a>
+        <a href="https://github.com/hamedafarag/claudeck/blob/main/docs/DOCUMENTATION.md" target="_blank" rel="noopener">Docs</a>
+        <a href="https://ko-fi.com/hamedfarag" target="_blank" rel="noopener">Ko-fi</a>
+        <a href="https://x.com/CloudeckAI" target="_blank" rel="noopener">X</a>
+        <a href="https://discord.gg/jYYUNS7V" target="_blank" rel="noopener">Discord</a>
+      </div>
+      <div class="footer-copy">
+        By <a href="https://github.com/hamedafarag" target="_blank" rel="noopener">Hamed Farag</a>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="/gallery.js"></script>
+</body>
+</html>

@@ -10,8 +10,10 @@
       "name": "Tasks",
       "description": "Todo list with priority levels and brag tracking",
       "author": "claudeck",
+      "authorGithub": "hamedafarag",
       "icon": "✅",
-      "hasServer": true
+      "hasServer": true,
+      "keywords": ["productivity", "todo", "tracking"]
     },
     {
       "id": "event-stream",
@@ -20,7 +22,9 @@
       "name": "Event Stream",
       "description": "Real-time WebSocket event viewer with filtering and search",
       "author": "claudeck",
-      "icon": "⚡"
+      "authorGithub": "hamedafarag",
+      "icon": "⚡",
+      "keywords": ["developer", "websocket", "debugging"]
     },
     {
       "id": "tic-tac-toe",
@@ -29,7 +33,9 @@
       "name": "Tic Tac Toe",
       "description": "Classic tic-tac-toe game",
       "author": "claudeck",
-      "icon": "🎮"
+      "authorGithub": "hamedafarag",
+      "icon": "🎮",
+      "keywords": ["game", "casual"]
     },
     {
       "id": "sudoku",
@@ -38,7 +44,9 @@
       "name": "Sudoku",
       "description": "Sudoku puzzle game with multiple difficulty levels",
       "author": "claudeck",
-      "icon": "🧩"
+      "authorGithub": "hamedafarag",
+      "icon": "🧩",
+      "keywords": ["game", "puzzle"]
     }
   ]
 }

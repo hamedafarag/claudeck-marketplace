@@ -3,14 +3,19 @@
   "framework": null,
   "rewrites": [
     { "source": "/js/ui/tab-sdk.js", "destination": "/showcase/mock/tab-sdk.js" },
+    { "source": "/js/ui/api.js", "destination": "/showcase/mock/api.js" },
+    { "source": "/js/ui/:path*.js", "destination": "/showcase/mock/noop.js" },
     { "source": "/js/core/utils.js", "destination": "/showcase/mock/utils.js" },
     { "source": "/js/core/:path*.js", "destination": "/showcase/mock/noop.js" },
     { "source": "/api/registry", "destination": "/api/registry" },
     { "source": "/api/plugins/:name/:path*", "destination": "/api/plugins/:name" },
     { "source": "/", "destination": "/showcase/index.html" },
+    { "source": "/plugins", "destination": "/showcase/plugins.html" },
     { "source": "/preview", "destination": "/showcase/preview.html" },
     { "source": "/css/:path*", "destination": "/showcase/css/:path*" },
-    { "source": "/gallery.js", "destination": "/showcase/js/gallery.js" }
+    { "source": "/images/:path*", "destination": "/showcase/images/:path*" },
+    { "source": "/gallery.js", "destination": "/showcase/js/gallery.js" },
+    { "source": "/home.js", "destination": "/showcase/js/home.js" }
   ],
   "headers": [
     {
