@@ -1,5 +1,6 @@
 {
   "buildCommand": "node scripts/build-server-routes.js",
+  "outputDirectory": ".",
   "framework": null,
   "rewrites": [
     { "source": "/js/ui/tab-sdk.js", "destination": "/showcase/mock/tab-sdk.js" },
