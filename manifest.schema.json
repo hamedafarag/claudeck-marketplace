@@ -50,6 +50,10 @@
       "type": "array",
       "items": { "type": "string" },
       "description": "Search keywords"
+    },
+    "authorGithub": {
+      "type": "string",
+      "description": "Author's GitHub username (used for profile link in marketplace)"
     }
   },
   "additionalProperties": false

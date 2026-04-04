@@ -10,14 +10,17 @@ async function init() {
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const registry = await res.json();
     plugins = registry.plugins || [];
-  } catch {
+  } catch (err) {
+    console.warn('Failed to fetch registry, trying local fallback:', err);
     try {
       const res = await fetch('/marketplace.json');
       if (res.ok) {
         const registry = await res.json();
         plugins = registry.plugins || [];
       }
-    } catch {}
+    } catch (fallbackErr) {
+      console.error('Failed to load plugins:', fallbackErr);
+    }
   }
 
   // Enrich monorepo plugins

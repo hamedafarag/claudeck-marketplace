@@ -1,9 +1,11 @@
 {
   "name": "claudeck-marketplace",
   "version": "1.0.0",
+  "description": "Official Claudeck Plugin Marketplace — registry and showcase for Tab SDK plugins",
   "private": true,
   "type": "module",
   "scripts": {
+    "dev": "node scripts/dev-server.js",
     "build": "node scripts/build-server-routes.js",
     "validate": "node scripts/validate-plugin.js"
   }

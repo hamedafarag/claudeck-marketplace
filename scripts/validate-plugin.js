@@ -142,7 +142,7 @@ function validateManifest(pluginName, pluginDir) {
 
   // No unknown fields
   const knownFields = new Set([
-    "id", "name", "version", "description", "author", "icon",
+    "id", "name", "version", "description", "author", "authorGithub", "icon",
     "hasServer", "minClaudeckVersion", "homepage", "keywords",
   ]);
   for (const key of Object.keys(manifest)) {
