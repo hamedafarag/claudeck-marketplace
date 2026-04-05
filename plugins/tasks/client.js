@@ -1,4 +1,5 @@
 // Tasks Tab — Tab SDK plugin for Todo list with brag tracking
+// Uses localStorage for persistence — no server dependency.
 import { registerTab } from '/js/ui/tab-sdk.js';
 
 const ICONS = {
@@ -15,10 +16,77 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
+// ── localStorage database ───────────────────────────────
+const TODOS_KEY = 'claudeck-plugin-tasks-todos';
+const BRAGS_KEY = 'claudeck-plugin-tasks-brags';
+let _nextId = Date.now();
+
+const db = {
+  _load(key) {
+    try { return JSON.parse(localStorage.getItem(key)) || []; }
+    catch { return []; }
+  },
+  _save(key, data) {
+    localStorage.setItem(key, JSON.stringify(data));
+  },
+
+  // Todos
+  listTodos(archived = false) {
+    return this._load(TODOS_KEY).filter(t => !!t.archived === archived);
+  },
+  createTodo(text) {
+    const all = this._load(TODOS_KEY);
+    const todo = { id: _nextId++, text, done: false, priority: 0, archived: false, created_at: new Date().toISOString() };
+    all.push(todo);
+    this._save(TODOS_KEY, all);
+    return todo;
+  },
+  updateTodo(id, updates) {
+    const all = this._load(TODOS_KEY);
+    const t = all.find(x => x.id === id);
+    if (t) Object.assign(t, updates);
+    this._save(TODOS_KEY, all);
+  },
+  archiveTodo(id, archived) {
+    this.updateTodo(id, { archived });
+  },
+  deleteTodo(id) {
+    const all = this._load(TODOS_KEY).filter(x => x.id !== id);
+    this._save(TODOS_KEY, all);
+  },
+  getCounts() {
+    const all = this._load(TODOS_KEY);
+    const brags = this._load(BRAGS_KEY);
+    return {
+      active: all.filter(t => !t.archived).length,
+      archived: all.filter(t => t.archived).length,
+      brags: brags.length,
+    };
+  },
+
+  // Brags
+  listBrags() {
+    return this._load(BRAGS_KEY);
+  },
+  createBrag(todoId, text, summary) {
+    const brags = this._load(BRAGS_KEY);
+    const brag = { id: _nextId++, todo_id: todoId, text, summary, created_at: new Date().toISOString() };
+    brags.push(brag);
+    this._save(BRAGS_KEY, brags);
+    this.archiveTodo(todoId, true);
+    return brag;
+  },
+  deleteBrag(id) {
+    const brags = this._load(BRAGS_KEY).filter(x => x.id !== id);
+    this._save(BRAGS_KEY, brags);
+  },
+};
+
 registerTab({
   id: 'tasks',
   title: 'Tasks',
   icon: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>',
+  lazy: true,
   init(ctx) {
     let todos = [];
     let brags = [];
@@ -119,13 +187,13 @@ registerTab({
         archBtn.innerHTML = showArchived ? ICONS.unarchive : ICONS.archive;
         archBtn.addEventListener('click', () => handleArchive(t.id, !showArchived));
 
-        const del = document.createElement('button');
-        del.className = 'todo-action-btn todo-delete-btn';
-        del.textContent = '\u00d7';
-        del.title = 'Delete';
-        del.addEventListener('click', () => handleDelete(t.id));
+        const delBtn = document.createElement('button');
+        delBtn.className = 'todo-action-btn todo-delete-btn';
+        delBtn.textContent = '\u00d7';
+        delBtn.title = 'Delete';
+        delBtn.addEventListener('click', () => handleDelete(t.id));
 
-        actions.append(archBtn, del);
+        actions.append(archBtn, delBtn);
         row.append(priDot, cb, span, actions);
         todoList.appendChild(row);
       }
@@ -158,22 +226,20 @@ registerTab({
 
         const date = document.createElement('div');
         date.className = 'brag-date';
-        date.textContent = new Date(b.created_at * 1000).toLocaleDateString();
+        date.textContent = new Date(b.created_at).toLocaleDateString();
 
-        const del = document.createElement('button');
-        del.className = 'todo-action-btn todo-delete-btn brag-delete';
-        del.textContent = '\u00d7';
-        del.title = 'Delete';
-        del.addEventListener('click', async () => {
-          try {
-            await ctx.api.deleteBragApi(b.id);
-            brags = brags.filter(x => x.id !== b.id);
-            renderTodos();
-            refreshCounts();
-          } catch { /* ignore */ }
+        const delBtn = document.createElement('button');
+        delBtn.className = 'todo-action-btn todo-delete-btn brag-delete';
+        delBtn.textContent = '\u00d7';
+        delBtn.title = 'Delete';
+        delBtn.addEventListener('click', () => {
+          db.deleteBrag(b.id);
+          brags = brags.filter(x => x.id !== b.id);
+          renderTodos();
+          refreshCounts();
         });
 
-        row.append(text, summary, date, del);
+        row.append(text, summary, date, delBtn);
         todoList.appendChild(row);
       }
     }
@@ -185,15 +251,13 @@ registerTab({
       bragToggle.title = showBrags ? 'Show active todos' : 'Show brag list';
     }
 
-    async function refreshCounts() {
-      try {
-        const counts = await ctx.api.fetchTodoCounts();
-        const label = showBrags ? 'Brags' : showArchived ? 'Archived' : 'Todo';
-        const count = showBrags ? counts.brags : showArchived ? counts.archived : counts.active;
-        todoHeader.textContent = `${label} (${count})`;
-        setBadge(archToggle, counts.archived);
-        setBadge(bragToggle, counts.brags);
-      } catch { /* ignore */ }
+    function refreshCounts() {
+      const counts = db.getCounts();
+      const label = showBrags ? 'Brags' : showArchived ? 'Archived' : 'Todo';
+      const count = showBrags ? counts.brags : showArchived ? counts.archived : counts.active;
+      todoHeader.textContent = `${label} (${count})`;
+      setBadge(archToggle, counts.archived);
+      setBadge(bragToggle, counts.brags);
     }
 
     function setBadge(btn, count) {
@@ -211,48 +275,38 @@ registerTab({
     }
 
     // ── CRUD handlers ────────────────────────────────
-    async function loadTodos() {
-      try {
-        todos = await ctx.api.fetchTodos(showArchived);
-        renderTodos();
-        refreshCounts();
-      } catch { /* ignore */ }
+    function loadTodos() {
+      todos = db.listTodos(showArchived);
+      renderTodos();
+      refreshCounts();
     }
 
-    async function handleToggle(id, done) {
-      try {
-        await ctx.api.updateTodoApi(id, { done });
-        const t = todos.find(x => x.id === id);
-        if (t) t.done = done;
-        renderTodos();
-      } catch { /* ignore */ }
+    function handleToggle(id, done) {
+      db.updateTodo(id, { done });
+      const t = todos.find(x => x.id === id);
+      if (t) t.done = done;
+      renderTodos();
     }
 
-    async function handleArchive(id, archived) {
-      try {
-        await ctx.api.archiveTodoApi(id, archived);
-        todos = todos.filter(x => x.id !== id);
-        renderTodos();
-        refreshCounts();
-      } catch { /* ignore */ }
+    function handleArchive(id, archived) {
+      db.archiveTodo(id, archived);
+      todos = todos.filter(x => x.id !== id);
+      renderTodos();
+      refreshCounts();
     }
 
-    async function handlePriority(id, priority) {
-      try {
-        await ctx.api.updateTodoApi(id, { priority });
-        const t = todos.find(x => x.id === id);
-        if (t) t.priority = priority;
-        renderTodos();
-      } catch { /* ignore */ }
+    function handlePriority(id, priority) {
+      db.updateTodo(id, { priority });
+      const t = todos.find(x => x.id === id);
+      if (t) t.priority = priority;
+      renderTodos();
     }
 
-    async function handleDelete(id) {
-      try {
-        await ctx.api.deleteTodoApi(id);
-        todos = todos.filter(x => x.id !== id);
-        renderTodos();
-        refreshCounts();
-      } catch { /* ignore */ }
+    function handleDelete(id) {
+      db.deleteTodo(id);
+      todos = todos.filter(x => x.id !== id);
+      renderTodos();
+      refreshCounts();
     }
 
     function showBragPrompt(todo) {
@@ -283,21 +337,14 @@ registerTab({
       cancelBtn.addEventListener('click', () => overlay.remove());
       overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
 
-      submitBtn.addEventListener('click', async () => {
+      submitBtn.addEventListener('click', () => {
         const summary = textarea.value.trim();
         if (!summary) { textarea.focus(); return; }
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Saving...';
-        try {
-          await ctx.api.bragTodoApi(todo.id, summary);
-          overlay.remove();
-          todos = todos.filter(x => x.id !== todo.id);
-          renderTodos();
-          refreshCounts();
-        } catch {
-          submitBtn.disabled = false;
-          submitBtn.textContent = 'Brag it!';
-        }
+        db.createBrag(todo.id, todo.text, summary);
+        overlay.remove();
+        todos = todos.filter(x => x.id !== todo.id);
+        renderTodos();
+        refreshCounts();
       });
 
       document.body.appendChild(overlay);
@@ -315,17 +362,13 @@ registerTab({
       sel.removeAllRanges();
       sel.addRange(range);
 
-      const finish = async () => {
+      const finish = () => {
         span.contentEditable = 'false';
         span.classList.remove('editing');
         const newText = span.textContent.trim();
         if (newText && newText !== todo.text) {
-          try {
-            await ctx.api.updateTodoApi(todo.id, { text: newText });
-            todo.text = newText;
-          } catch {
-            span.textContent = todo.text;
-          }
+          db.updateTodo(todo.id, { text: newText });
+          todo.text = newText;
         } else {
           span.textContent = todo.text;
         }
@@ -351,7 +394,8 @@ registerTab({
         if (!text) return;
         todoInput.value = '';
         todoInputBar.style.display = 'none';
-        ctx.api.createTodoApi(text).then(() => loadTodos()).catch(() => {});
+        db.createTodo(text);
+        loadTodos();
       }
       if (e.key === 'Escape') {
         todoInputBar.style.display = 'none';
@@ -367,14 +411,14 @@ registerTab({
       loadTodos();
     });
 
-    bragToggle.addEventListener('click', async () => {
+    bragToggle.addEventListener('click', () => {
       showBrags = !showBrags;
       showArchived = false;
       updateHeaderToggle();
       todoAddBtn.style.display = showBrags ? 'none' : '';
       todoInputBar.style.display = 'none';
       if (showBrags) {
-        try { brags = await ctx.api.fetchBrags(); } catch { brags = []; }
+        brags = db.listBrags();
         renderTodos();
         refreshCounts();
       } else {

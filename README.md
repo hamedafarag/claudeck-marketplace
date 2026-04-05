@@ -38,12 +38,18 @@ Community plugins appear automatically in your Claudeck marketplace (the **+** b
 
 ## For Developers
 
-Want to build a plugin? See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide.
+Want to build a plugin? See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide, including:
+- Tab SDK reference (events, state keys, API functions, lifecycle hooks)
+- CSS design tokens and scoping guidelines
+- Server plugin setup
+- Showcase preview vs real Claudeck differences
+- Testing and validation
 
 **Quick start:**
-1. Create a plugin using the Tab SDK (`registerTab()`)
-2. Add a `manifest.json` with your plugin metadata
-3. Submit a PR to this repo
+1. Scaffold a plugin with Claude Code: `npx skills add https://github.com/hamedafarag/claudeck-skills` then `/claudeck-plugin-create my-plugin A short description`
+2. Or build manually using the Tab SDK (`registerTab()`) + `manifest.json`
+3. Preview at `/preview?plugin=your-plugin` (after running `npm run dev`)
+4. Submit a PR to this repo
 
 ### manifest.json
 

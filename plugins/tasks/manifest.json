@@ -5,6 +5,6 @@
   "description": "Todo list with priority levels and brag tracking",
   "author": "claudeck",
   "icon": "✅",
-  "hasServer": true,
-  "minClaudeckVersion": "1.4.0"
+  "hasServer": false,
+  "minClaudeckVersion": "1.4.1"
 }

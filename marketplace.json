@@ -12,7 +12,7 @@
       "author": "claudeck",
       "authorGithub": "hamedafarag",
       "icon": "✅",
-      "hasServer": true,
+      "hasServer": false,
       "keywords": ["productivity", "todo", "tracking"]
     },
     {
